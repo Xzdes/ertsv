@@ -2,13 +2,13 @@
   "name": "ertsv-app",
   "version": "0.1.0",
   "private": true,
-  "main": "dist/main.js",
+  "main": "dist/main/index.js",
   "scripts": {
-    "build:main": "esbuild src/main/index.ts src/preload/index.ts --bundle --platform=node --outdir=dist",
-    "watch:main": "npm run build:main -- --watch",
+    "build:main": "tsc",
+    "watch:main": "tsc --watch",
     "dev:vite": "vite",
-    "start:electron": "node start.cjs",
-    "dev": "concurrently -k \"npm:watch:main\" \"npm:dev:vite\" \"npm:start:electron\""
+    "start:electron": "wait-on tcp:5173 && electron .",
+    "dev": "npm run build:main && concurrently -k \"npm:watch:main\" \"npm:dev:vite\" \"npm:start:electron\""
   },
   "dependencies": {
     "react": "^19.1.1",
@@ -20,9 +20,8 @@
     "@vitejs/plugin-react": "^4.3.1",
     "concurrently": "^9.2.0",
     "electron": "^31.2.1",
-    "esbuild": "^0.23.0",
     "typescript": "^5.4.5",
     "vite": "^7.0.6",
-    "wait-on": "^7.2.0"
+    "wait-on": "^8.0.4"
   }
 }
