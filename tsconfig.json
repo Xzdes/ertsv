@@ -10,9 +10,11 @@
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "resolveJsonModule": true,
-    "outDir": "dist", // Компилируем всё в одну папку dist
+    "outDir": "dist",
+    "rootDir": "src", // ★★★ ГЛАВНОЕ ИЗМЕНЕНИЕ: Указываем корень исходников ★★★
     "baseUrl": ".",
     "paths": {
+      // Пути остаются для удобства разработки в VS Code
       "@renderer/*": ["src/renderer/*"],
       "@main/*": ["src/main/*"],
       "@shared/*": ["src/shared/*"]
@@ -20,10 +22,11 @@
   },
   "include": [
     "src/main/**/*.ts",
-    "src/preload/**/*.ts"
+    "src/preload/**/*.ts",
+    "src/ertsv/**/*.ts"
   ],
   "exclude": [
     "node_modules",
-    "src/renderer" // Исключаем фронтенд, им занимается Vite
+    "src/renderer"
   ]
 }

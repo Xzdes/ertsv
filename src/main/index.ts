@@ -1,9 +1,20 @@
 // src/main/index.ts
-import { app, BrowserWindow, ipcMain } from 'electron';
+import { app, BrowserWindow } from 'electron';
 import path from 'path';
+import { bindApi } from '../ertsv/main';
 import { windowApi } from '../modules/window/api';
 
 const isDev = process.env.NODE_ENV === 'development';
+
+// Собираем корневой API из всех наших модулей
+const rootApi = {
+  window: windowApi,
+  // В будущем здесь можно будет добавлять другие модули
+  // fs: fsApi,
+};
+
+// Экспортируем тип нашего API, чтобы кодогенератор мог его использовать
+export type RootApi = typeof rootApi;
 
 function createWindow() {
   const mainWindow = new BrowserWindow({
@@ -17,15 +28,8 @@ function createWindow() {
     },
   });
 
-  ipcMain.handle('window:minimize', () => mainWindow.minimize());
-  ipcMain.handle('window:toggleMaximize', () => {
-    if (mainWindow.isMaximized()) {
-      mainWindow.unmaximize();
-    } else {
-      mainWindow.maximize();
-    }
-  });
-  ipcMain.handle('window:close', () => mainWindow.close());
+  // Вся сложность регистрации IPC-обработчиков спрятана в ядре
+  bindApi(mainWindow, rootApi);
 
   if (isDev) {
     mainWindow.loadURL('http://localhost:5173');
@@ -37,6 +41,7 @@ function createWindow() {
 
 app.whenReady().then(() => {
   createWindow();
+
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) {
       createWindow();
@@ -45,9 +50,8 @@ app.whenReady().then(() => {
 });
 
 app.on('window-all-closed', () => {
-  ipcMain.removeHandler('window:minimize');
-  ipcMain.removeHandler('window:toggleMaximize');
-  ipcMain.removeHandler('window:close');
+  // Нам не нужно вручную удалять обработчики здесь,
+  // так как функция bindApi теперь сама заботится об этом при закрытии окна.
   if (process.platform !== 'darwin') {
     app.quit();
   }
