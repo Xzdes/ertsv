@@ -1,0 +1,52 @@
+{
+  "name": "ertsv-app",
+  "version": "0.1.0",
+  "private": true,
+  "main": "dist/main/index.js",
+  "scripts": {
+    "dev": "npm run build:main && concurrently -k \"npm:watch:main\" \"npm:dev:vite\" \"npm:dev:electron\"",
+    "build": "npm run build:main && npm run build:renderer",
+    "build:main": "tsc",
+    "build:renderer": "vite build",
+    "watch:main": "tsc --watch",
+    "dev:vite": "vite",
+    "dev:electron": "nodemon",
+    "package": "npm run build && electron-builder"
+  },
+  "dependencies": {
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.3",
+    "@types/react-dom": "^18.3.0",
+    "@vitejs/plugin-react": "^4.3.1",
+    "concurrently": "^8.2.2",
+    "electron": "^31.0.0",
+    "electron-builder": "^24.13.3",
+    "electron-reloader": "^1.2.3",
+    "nodemon": "^3.1.3",
+    "typescript": "^5.4.5",
+    "vite": "^5.2.13"
+  },
+  "build": {
+    "appId": "com.ertsv.app",
+    "productName": "ertsv App",
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "dist/",
+      "package.json"
+    ],
+    "mac": {
+      "target": "dmg"
+    },
+    "win": {
+      "target": "nsis"
+    },
+    "linux": {
+      "target": "AppImage"
+    }
+  }
+}
