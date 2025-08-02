@@ -1,26 +1,15 @@
 {
   "compilerOptions": {
-    "target": "ES2022",
-    "module": "CommonJS",
-    "lib": ["ES2022", "DOM"],
-    "jsx": "react-jsx",
+    "target": "ESNext",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "lib": ["ESNext"],
     "strict": true,
-    "moduleResolution": "node",
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
-    "resolveJsonModule": true,
-    "outDir": "dist",
-    "rootDir": "src"
+    "outDir": "dist"
   },
-  "include": [
-    "src/main",
-    "src/preload",
-    "src/ertsv"
-  ],
-  "exclude": [
-    "node_modules",
-    "src/renderer",
-    "src/ertsv/react"
-  ]
+  "include": ["src/main", "src/preload", "src/modules"],
+  "exclude": ["node_modules"]
 }

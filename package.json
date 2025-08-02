@@ -2,16 +2,13 @@
   "name": "ertsv-app",
   "version": "0.1.0",
   "private": true,
-  "main": "dist/main/index.js",
+  "main": "dist/main.js",
   "scripts": {
-    "dev": "npm run build:main && concurrently -k --kill-others-on-fail \"npm:watch:main\" \"npm:dev:vite\" \"npm:dev:electron\"",
-    "build": "npm run build:main && npm run build:renderer",
-    "build:main": "tsc",
-    "build:renderer": "vite build",
-    "watch:main": "tsc --watch",
+    "build:main": "esbuild src/main/index.ts src/preload/index.ts --bundle --platform=node --outdir=dist",
+    "watch:main": "npm run build:main -- --watch",
     "dev:vite": "vite",
-    "dev:electron": "nodemon --exitcrash",
-    "package": "npm run build && electron-builder"
+    "start:electron": "node start.cjs",
+    "dev": "concurrently -k \"npm:watch:main\" \"npm:dev:vite\" \"npm:start:electron\""
   },
   "dependencies": {
     "react": "^19.1.1",
@@ -22,31 +19,10 @@
     "@types/react-dom": "^19.1.7",
     "@vitejs/plugin-react": "^4.3.1",
     "concurrently": "^9.2.0",
-    "electron": "^37.2.5",
-    "electron-builder": "^26.0.19",
-    "electron-reloader": "^1.2.3",
-    "nodemon": "^3.1.3",
+    "electron": "^31.2.1",
+    "esbuild": "^0.23.0",
     "typescript": "^5.4.5",
-    "vite": "^7.0.6"
-  },
-  "build": {
-    "appId": "com.ertsv.app",
-    "productName": "ertsv App",
-    "directories": {
-      "output": "release"
-    },
-    "files": [
-      "dist/",
-      "package.json"
-    ],
-    "mac": {
-      "target": "dmg"
-    },
-    "win": {
-      "target": "nsis"
-    },
-    "linux": {
-      "target": "AppImage"
-    }
+    "vite": "^7.0.6",
+    "wait-on": "^7.2.0"
   }
 }

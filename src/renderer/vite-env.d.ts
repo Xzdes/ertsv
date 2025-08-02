@@ -21,6 +21,7 @@ export interface IErtsvApi {
     toggleMaximize: () => Promise<void>;
     close: () => Promise<void>;
   };
+  // Здесь можно будет добавлять типы для других модулей, например, fs
 }
 
 // 2. Расширяем глобальный объект Window, добавляя в него наше API

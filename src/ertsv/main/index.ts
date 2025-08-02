@@ -1,28 +1,37 @@
 // src/ertsv/main/index.ts
-import { BrowserWindow, ipcMain } from 'electron';
+import { ipcMain } from 'electron';
+// Используем type-only импорты, чтобы не создавать лишних переменных
+import type { BrowserWindow, IpcMainInvokeEvent } from 'electron';
 
-// Тип для любого объекта API
-type ApiModule = { [key: string]: (...args: any[]) => any };
+console.log('>>> [CORE-MAIN] L0: Файл загружен.');
 
-export function bindApi<T extends { [key: string]: ApiModule }>(win: BrowserWindow, api: T) {
-  for (const namespace of Object.keys(api) as Array<keyof T>) {
-    for (const methodName of Object.keys(api[namespace]) as Array<keyof T[typeof namespace]>) {
-      const channel = `${String(namespace)}:${String(methodName)}`;
+// Определяем типы для нашего API, чтобы все было строго
+type ApiMethod = (win: BrowserWindow, ...args: any[]) => any;
+type ApiModule = { [methodName: string]: ApiMethod };
+type RootApi = { [namespace: string]: ApiModule };
+
+export function bindApi(win: BrowserWindow, api: RootApi): void {
+  console.log('>>> [CORE-MAIN] L1: Вызвана функция bindApi.');
+  for (const namespace of Object.keys(api)) {
+    for (const methodName of Object.keys(api[namespace])) {
+      const channel = `${namespace}:${methodName}`;
+      console.log(`>>> [CORE-MAIN] L2: Регистрируем обработчик для канала: ${channel}`);
       
-      ipcMain.handle(channel, (event, ...args) => {
+      // ИСПРАВЛЕНО: Используем правильный тип события IpcMainInvokeEvent для ipcMain.handle
+      ipcMain.handle(channel, (event: IpcMainInvokeEvent, ...args: any[]) => {
         if (event.sender === win.webContents) {
-          const method = api[namespace][methodName] as Function;
-          return method(win, ...args); // Передаем win первым аргументом неявно
+          const method = api[namespace][methodName];
+          return method(win, ...args);
         }
       });
     }
   }
   
-  // Очистка при закрытии окна
   win.on('closed', () => {
-    for (const namespace of Object.keys(api) as Array<keyof T>) {
+    console.log('>>> [CORE-MAIN] L3: Окно закрыто. Удаляем обработчики.');
+    for (const namespace of Object.keys(api)) {
       for (const methodName of Object.keys(api[namespace])) {
-        ipcMain.removeHandler(`${String(namespace)}:${String(methodName)}`);
+        ipcMain.removeHandler(`${namespace}:${methodName}`);
       }
     }
   });
