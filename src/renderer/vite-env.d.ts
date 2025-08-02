@@ -1,26 +1,29 @@
+// src/renderer/vite-env.d.ts
+
 /// <reference types="vite/client" />
 
-// --- НАЧАЛО: РАСШИРЕНИЕ ТИПОВ REACT ДЛЯ CSS ---
+// --- РАСШИРЕНИЕ ТИПОВ REACT ДЛЯ ПОДДЕРЖКИ CSS-СВОЙСТВ ELECTRON ---
 import 'react';
 
 declare module 'react' {
+  // Расширяем стандартный интерфейс CSSProperties, добавляя наше свойство
   interface CSSProperties {
-    '-webkit-app-region'?: 'drag' | 'no-drag';
+    WebkitAppRegion?: 'drag' | 'no-drag';
   }
 }
-// --- КОНЕЦ: РАСШИРЕНИЕ ТИПОВ REACT ДЛЯ CSS ---
 
+// --- ОБЪЯВЛЕНИЕ ГЛОБАЛЬНОГО API, КОТОРОЕ ПРИХОДИТ ИЗ PRELOAD ---
 
-// Объявляем тип нашего API
+// 1. Описываем точную "форму" (интерфейс) нашего API
 export interface IErtsvApi {
   window: {
-    minimize: () => void;
-    toggleMaximize: () => void;
-    close: () => void;
+    minimize: () => Promise<void>;
+    toggleMaximize: () => Promise<void>;
+    close: () => Promise<void>;
   };
 }
 
-// Расширяем глобальный объект Window
+// 2. Расширяем глобальный объект Window, добавляя в него наше API
 declare global {
   interface Window {
     ertsvApi: IErtsvApi;

@@ -3,12 +3,12 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
 
-// Получаем доступ к API, которое мы создали в preload
 const api = window.ertsvApi;
 
 function App() {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
+      {/* Кастомная шапка окна */}
       <div
         style={{
           display: 'flex',
@@ -16,12 +16,12 @@ function App() {
           alignItems: 'center',
           padding: '8px',
           backgroundColor: '#333',
-          // @ts-ignore - УДАЛИТЕ ЭТУ СТРОКУ
-          '-webkit-app-region': 'drag',
+          // ★★★ ИСПРАВЛЕНИЕ: Используем camelCase, как просит React ★★★
+          WebkitAppRegion: 'drag',
         }}
       >
         <span>ertsv App</span>
-        <div style={{ display: 'flex', gap: '8px', /* @ts-ignore */ '-webkit-app-region': 'no-drag' /* И ЭТУ ТОЖЕ */ }}>
+        <div style={{ display: 'flex', gap: '8px', WebkitAppRegion: 'no-drag' }}>
           <button onClick={() => api.window.minimize()}>_</button>
           <button onClick={() => api.window.toggleMaximize()}>[]</button>
           <button onClick={() => api.window.close()}>X</button>

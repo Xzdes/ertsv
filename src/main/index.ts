@@ -5,12 +5,6 @@ import { windowApi } from '../modules/window/api';
 
 const isDev = process.env.NODE_ENV === 'development';
 
-const rootApi = {
-  window: windowApi,
-};
-
-export type RootApi = typeof rootApi;
-
 function createWindow() {
   const mainWindow = new BrowserWindow({
     width: 1280,
@@ -23,10 +17,6 @@ function createWindow() {
     },
   });
 
-  // ★★★ НАЧАЛО ФИНАЛЬНОГО ИСПРАВЛЕНИЯ ★★★
-  // Мы создаем обработчики здесь, внутри createWindow,
-  // чтобы у них был доступ к `mainWindow`.
-
   ipcMain.handle('window:minimize', () => mainWindow.minimize());
   ipcMain.handle('window:toggleMaximize', () => {
     if (mainWindow.isMaximized()) {
@@ -36,9 +26,6 @@ function createWindow() {
     }
   });
   ipcMain.handle('window:close', () => mainWindow.close());
-
-  // ★★★ КОНЕЦ ФИНАЛЬНОГО ИСПРАВЛЕНИЯ ★★★
-
 
   if (isDev) {
     mainWindow.loadURL('http://localhost:5173');
@@ -58,12 +45,9 @@ app.whenReady().then(() => {
 });
 
 app.on('window-all-closed', () => {
-  // Перед выходом приложения важно удалить все обработчики,
-  // чтобы избежать утечек памяти при перезапусках.
   ipcMain.removeHandler('window:minimize');
   ipcMain.removeHandler('window:toggleMaximize');
   ipcMain.removeHandler('window:close');
-
   if (process.platform !== 'darwin') {
     app.quit();
   }
